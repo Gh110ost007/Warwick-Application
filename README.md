@@ -1,74 +1,81 @@
-# Warwick+ Film Database — Custom Data Structures Implementation
+# Warwick+ Coursework — CS126 (2024/25)
 
-A high-performance film database backend implemented from scratch using custom data structures, developed as part of CS126: Design of Information Structures at the University of Warwick.
+## Introduction
 
-## Project Overview
+This project was developed as part of the CS126: Design of Information Structures module at the University of Warwick. The aim was to implement backend store classes — Movies, Credits, and Ratings — using custom-built data structures without relying on Java's Collections framework.
 
-This project demonstrates advanced understanding of fundamental computer science concepts by implementing a complete film database system using only custom-built data structures. The system manages three core entities — Movies, Credits, and Ratings — with optimized query performance and memory efficiency.
+The stores together form a simplified backend for a film database, supporting queries on movies, ratings, and cast/crew information. This report discusses the design and implementation of the three store classes, explaining the data structures used, the reasoning behind the choices, and how they helped meet the coursework requirements efficiently.
 
-**Key Achievement:** Achieved 22x performance improvement (2800ms → 125ms) through strategic data structure design and algorithmic optimization.
+**Key Achievement:** Achieved 22x performance improvement (2800ms → 125ms) through strategic data structure design and optimization.
 
-## Technical Implementation
+## Data Structures Overview
 
-### Custom Data Structures
+Across all three classes, the implementation mainly used two custom-built data structures:
 
-**MyHashTable**: A chaining-based hash table implementation providing O(1) average-case lookup, insertion, and deletion operations. Features collision resolution through linked list chaining and optimized for integer key hashing.
+- **MyHashTable**: a simple hash table based on chaining with linked lists
+- **MyDynamicArray**: a manually implemented resizable array, similar to Java's built-in ArrayList
 
-**MyDynamicArray**: A resizable array implementation with automatic capacity management, providing O(1) random access and amortized O(1) insertion. Implements efficient memory management with strategic resizing policies.
+These structures provided fast access times, simplicity of implementation, and flexibility while staying within the coursework restrictions (i.e., not using Java's standard Collections framework). They were lightweight but powerful enough to handle all the basic operations the Warwick+ project required, such as inserting, removing, finding, and listing many entries efficiently.
 
-### Architecture Highlights
+## Implemented Stores
 
-- **Constraint-Driven Design**: Built without Java Collections framework to demonstrate deep understanding of fundamental data structures
-- **Performance-First Approach**: Achieved near-constant time operations for core database queries
-- **Memory Efficiency**: Optimized storage with sparse data representation and intelligent resizing
-- **Scalable Design**: Architecture supports efficient handling of large datasets
+### Movies Class
 
-## System Architecture
+**Structures Used:**
 
-### Movies Store
+- `MyHashTable<Integer, Movie> movieTable`
+- `MyDynamicArray<Integer> movieIDs`
 
-- **Primary Structure**: `MyHashTable<Integer, Movie>` for O(1) movie lookup by ID
-- **Secondary Structure**: `MyDynamicArray<Integer>` for efficient iteration and search operations
-- **Key Features**: Generic field access methods, collection management, production company tracking
-- **Performance**: Constant-time movie retrieval, linear-time search operations
+**Reasoning:**
+The system needed to quickly find a movie by its ID (for example, when setting ratings or popularity) and list all movies for tasks like searching by title, checking collections, etc. Using a hash table for movie lookup made sense because IDs were unique integers and the hash table provided constant time access. Keeping a separate dynamic array of movieIDs made iteration (e.g., getting all movies, searching by title) easier and efficient without scanning the whole hash table.
 
-### Credits Store
+**Implementation:**
+Each movie added to the store is stored in movieTable, and its ID is recorded in movieIDs. To avoid repeating similar code for each movie field (like title, overview, revenue, etc.), a generic getField helper was created that takes a lambda extractor. This design kept the class concise, clear, and less error-prone.
 
-- **Primary Structure**: `MyHashTable<Integer, CreditRecord>` for film-to-credits mapping
-- **Global Indexes**: Separate dynamic arrays for unique cast and crew members
-- **Key Features**: Duplicate prevention, billing order management, cross-film queries
-- **Performance**: O(1) credit lookup, efficient global people searches
+### Credits Class
 
-### Ratings Store
+**Structures Used:**
 
-- **Dual Indexing**: Two hash tables for bidirectional queries
-  - `movieID → ratings[]` for movie-based analytics
-  - `userID → ratings[]` for user-based analytics
-- **Key Features**: Rating aggregation, user behavior analysis, movie popularity metrics
-- **Performance**: O(1) rating access from both movie and user perspectives
+- `MyHashTable<Integer, CreditRecord> creditRecords`
+- `MyDynamicArray<CastCredit> uniqueCast`
+- `MyDynamicArray<CrewCredit> uniqueCrew`
 
-## Technical Skills Demonstrated
+**Reasoning:**
+Credits management needed to quickly find the cast and crew for a film, find all films for a cast/crew member, and search people globally (across all movies). Using a hash table for mapping filmID to CreditRecord gave fast access to a movie's credits. Using dynamic arrays for uniqueCast and uniqueCrew allowed flexible global searching and listing.
 
-### Data Structure Design
+**Implementation:**
+Each film's cast and crew are stored together in a CreditRecord object linked to its filmID. When adding credits, the system ensures that no duplicate cast or crew members are inserted into the unique lists.
 
-- **Hash Table Implementation**: Custom chaining-based hash table with collision resolution
-- **Dynamic Array Management**: Self-implemented resizable arrays with strategic memory allocation
-- **Algorithm Optimization**: Achieved 22x performance improvement through data structure selection
-- **Memory Management**: Efficient storage patterns and intelligent resizing policies
+### Ratings Class
 
-### Software Engineering Practices
+**Structures Used:**
 
-- **Clean Architecture**: Separation of concerns with dedicated store classes
-- **Code Reusability**: Generic helper methods reducing code duplication
-- **Performance Analysis**: Time complexity optimization and benchmarking
-- **Testing**: Comprehensive JUnit test suite covering edge cases and performance metrics
+- `MyHashTable<Integer, MyDynamicArray<Rating>> movieRatings`
+- `MyHashTable<Integer, MyDynamicArray<Rating>> userRatings`
 
-### Problem-Solving Approach
+**Reasoning:**
+The Ratings class needed to efficiently support two types of access: find all ratings for a movie and find all ratings made by a user. A hash table was the best fit because it allowed constant time O(1) access to either movieID or userID. A dynamic array was used for storing multiple ratings associated with each movie or user because the number of ratings is unpredictable and could grow without an initial fixed limit.
 
-- **Constraint-Driven Development**: Built complex system without standard library dependencies
-- **Trade-off Analysis**: Balanced performance, memory usage, and code complexity
-- **Scalability Considerations**: Designed for efficient handling of large datasets
-- **Iterative Improvement**: Performance optimization through systematic analysis
+## Why These Data Structures Were Chosen
+
+### MyHashTable
+
+Hash tables were essential because:
+
+- They offer O(1) average lookup time, compared to O(n) for arrays or lists
+- They allowed direct access to the movie or user of interest without scanning
+- Implementing a custom chaining-based hash table provided flexibility over collision handling and load control
+- In all three stores, IDs (integers) made hashing very simple and efficient
+
+### MyDynamicArray
+
+Dynamic arrays were chosen because:
+
+- They grow automatically when needed without worrying about capacity
+- They offer O(1) random access by index
+- For operations like listing all movies, listing cast/crew, and sorting results, they were the simplest solution
+- Writing a custom array allowed understanding and control of resizing policies
+- Compared to linked lists, dynamic arrays have better cache performance and faster access, which suited this coursework better
 
 ## Repository Structure
 
@@ -174,58 +181,41 @@ Run tests with:
 | Rating Addition       | O(1)            | Hash table insertion                    |
 | Data Population       | 125ms           | 22x improvement from initial 2800ms     |
 
-## Future Enhancements
+## Possible Improvements
 
-### Scalability Improvements
+1. **Hash Table Resizing**
+   Currently, the hash table has a fixed capacity (2048). If the number of stored entries grows too large, the hash table could become inefficient because of collisions. An improvement would be to track load factor (e.g., size / capacity) and resize (double capacity) and rehash all entries once a threshold is exceeded. This would maintain near O(1) access even for very large datasets.
 
-- **Dynamic Hash Table Resizing**: Implement load factor monitoring and automatic rehashing
-- **Advanced Sorting**: Replace O(n²) algorithms with O(n log n) alternatives (merge sort, quick sort)
-- **Name-Based Indexing**: Add secondary hash tables for O(1) name-based searches
-- **Memory Optimization**: Implement 1.5x growth factor for more efficient memory usage
+2. **Better Sorting Algorithms**
+   Bubble sort is simple but inefficient (O(n²)). For production-scale data, a stable and efficient sort like merge sort (O(n log n)) would perform much better. For numeric sorts, quick sort could be used where stability is not required.
 
-### Production Readiness
+3. **Indexing by Name**
+   Searching by cast/crew name or movie title currently requires linear scans. A better version would involve building a second hash table mapping names -> IDs. This would make searching for names instant (O(1)) instead of O(n). This could especially help if the database contains thousands of movies and people.
 
-- **Exception Handling**: Custom exception classes for better error management
-- **Input Validation**: Comprehensive validation for all public methods
-- **Caching Layer**: LRU cache implementation for frequently accessed data
-- **Batch Operations**: Support for bulk insert/update operations
+4. **Memory Efficiency**
+   MyDynamicArray doubles its size during resizing. This is fast, but wastes memory when only slightly over capacity. Strategies like increasing size by 1.5x would save memory while still keeping resizing cost low.
 
-## Key Learnings & Impact
+5. **Error Handling**
+   Currently, invalid IDs return null or -1. A more robust system would throw custom exceptions (e.g., MovieNotFoundException) and provide clearer API behavior for error cases. This would make the store classes safer and more predictable to use.
 
-### Technical Growth
+## Reflections
 
-This project provided hands-on experience with fundamental computer science concepts including hash table collision resolution, dynamic array memory management, and algorithmic complexity analysis. The constraint of building without standard libraries deepened understanding of underlying data structure mechanics.
+When designing these classes, the main goals were simplicity and correctness. The approach focused on:
 
-### Performance Achievement
+- Minimizing unnecessary complexity
+- Writing code that is easy to read, debug, and explain
+- Focusing on functionality first, then minor optimizations
 
-The 22x performance improvement demonstrates ability to identify bottlenecks and implement effective optimizations. This experience translates directly to real-world software development where performance optimization is crucial.
+During testing, it became clear that good internal helpers (like getField) saved a lot of repetitive work. This project provided hands-on experience with core data structure concepts like hashing, dynamic arrays, and sorting algorithms.
 
-### Engineering Excellence
+## Conclusion
 
-The project showcases clean code practices, comprehensive testing, and systematic problem-solving approach. The generic helper methods and modular design demonstrate understanding of software engineering best practices.
+Overall, the design and implementation achieved the intended goals. The combination of hash tables and dynamic arrays allowed the system to meet all the coursework functionality requirements, keep the code manageable, and achieve good performance within the limits of simple data structures.
 
-## Technologies & Tools
+If this project was expanded to a real-world application, time would definitely be invested into optimizing sort performance, improving lookup speeds, and reducing memory usage. However, for Warwick+ coursework, this balance of performance, simplicity, and correctness was the right choice.
 
-- **Language**: Java 21
-- **Build System**: Gradle
-- **Testing**: JUnit
-- **Version Control**: Git
-- **Development**: IntelliJ IDEA
-- **Documentation**: Markdown, PDF reports
+## Documentation
 
-## Academic Context
-
-This project was completed as part of CS126: Design of Information Structures at the University of Warwick (2024/25). The coursework focused on implementing fundamental data structures from scratch to demonstrate deep understanding of computer science principles.
-
-**Coursework Report**: Detailed design analysis and implementation decisions are documented in `CS126 Coursework Report.pdf`.
-
-## Contact & Portfolio
-
-This project demonstrates proficiency in:
-
-- **Data Structure Implementation**: Custom hash tables and dynamic arrays
-- **Algorithm Design**: Performance optimization and complexity analysis
-- **Software Engineering**: Clean architecture and testing practices
-- **Problem Solving**: Constraint-driven development and trade-off analysis
-
-For more projects and technical details, please visit my GitHub profile or contact me directly.
+- **CS126 Coursework Report.pdf** — Comprehensive design analysis and implementation details
+- **Code Comments** — Extensive inline documentation explaining design decisions
+- **Interface Documentation** — Clear API specifications in interface files
