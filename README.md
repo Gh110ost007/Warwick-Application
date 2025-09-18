@@ -1,67 +1,76 @@
-# Warwick+ Coursework — CS126 (2024/25)
+# Warwick+ Film Database — Custom Data Structures Implementation
 
-## 📌 Overview
+A high-performance film database backend implemented from scratch using custom data structures, developed as part of CS126: Design of Information Structures at the University of Warwick.
 
-This project was developed as part of the **CS126: Design of Information Structures** module at the University of Warwick.  
-The aim was to implement backend store classes — `Movies`, `Credits`, and `Ratings` — using **custom-built data structures** without relying on Java's Collections framework.
+## Project Overview
 
-The stores together form a simplified backend for a film database, supporting queries on movies, ratings, and cast/crew information.
+This project demonstrates advanced understanding of fundamental computer science concepts by implementing a complete film database system using only custom-built data structures. The system manages three core entities — Movies, Credits, and Ratings — with optimized query performance and memory efficiency.
 
----
+**Key Achievement:** Achieved 22x performance improvement (2800ms → 125ms) through strategic data structure design and algorithmic optimization.
 
-## ⚙️ Tech Stack
+## Technical Implementation
 
-- **Language:** Java (21)
-- **Custom Data Structures:**
-  - `MyHashTable<K, V>` — chaining-based hash table for O(1) lookups
-  - `MyDynamicArray<T>` — resizable array for flexible storage
-- **Build Tool:** Gradle
-- **Testing:** JUnit
+### Custom Data Structures
 
----
+**MyHashTable**: A chaining-based hash table implementation providing O(1) average-case lookup, insertion, and deletion operations. Features collision resolution through linked list chaining and optimized for integer key hashing.
 
-## 🏗️ Implemented Stores
+**MyDynamicArray**: A resizable array implementation with automatic capacity management, providing O(1) random access and amortized O(1) insertion. Implements efficient memory management with strategic resizing policies.
 
-### 🎬 Movies
+### Architecture Highlights
 
-- Stores all movie metadata (`title`, `overview`, `revenue`, `genres`, etc.)
-- Fast O(1) lookup by `movieID` using `MyHashTable<Integer, Movie>`
-- Sequential access via `MyDynamicArray<Integer>` of IDs for listing/search
-- Supports collection management and production company/country tracking
-- Generic `getField()` helper methods eliminate code duplication
+- **Constraint-Driven Design**: Built without Java Collections framework to demonstrate deep understanding of fundamental data structures
+- **Performance-First Approach**: Achieved near-constant time operations for core database queries
+- **Memory Efficiency**: Optimized storage with sparse data representation and intelligent resizing
+- **Scalable Design**: Architecture supports efficient handling of large datasets
 
-### ⭐ Credits
+## System Architecture
 
-- Manages cast and crew credits for each film
-- Maps `filmID -> CreditRecord` using a hash table
-- Maintains global unique lists of cast and crew in dynamic arrays
-- Supports queries like _find stars in films_ or _list all films for a crew member_
-- Handles billing order sorting and duplicate prevention
+### Movies Store
 
-### 📊 Ratings
+- **Primary Structure**: `MyHashTable<Integer, Movie>` for O(1) movie lookup by ID
+- **Secondary Structure**: `MyDynamicArray<Integer>` for efficient iteration and search operations
+- **Key Features**: Generic field access methods, collection management, production company tracking
+- **Performance**: Constant-time movie retrieval, linear-time search operations
 
-- Stores user ratings of movies with two hash tables:
-  - `movieID -> ratings[]` for movie-based queries
-  - `userID -> ratings[]` for user-based queries
-- Enables queries like _all ratings for a movie_ or _all ratings by a user_
-- Ratings can be added, updated, or removed efficiently
-- Supports finding most-rated movies and users
+### Credits Store
 
----
+- **Primary Structure**: `MyHashTable<Integer, CreditRecord>` for film-to-credits mapping
+- **Global Indexes**: Separate dynamic arrays for unique cast and crew members
+- **Key Features**: Duplicate prevention, billing order management, cross-film queries
+- **Performance**: O(1) credit lookup, efficient global people searches
 
-## 🚀 Performance Achievements
+### Ratings Store
 
-- **Store population time** optimized from ~2800ms to ~125ms (~22x faster) through:
-  - Efficient hashing with custom hash table implementation
-  - Use of lightweight dynamic arrays
-  - Reduced code duplication and improved data flow
-  - Generic helper methods for consistent field access
-- Achieved near O(1) lookups for movies, users, and ratings
-- Memory-efficient storage with only non-empty entries
+- **Dual Indexing**: Two hash tables for bidirectional queries
+  - `movieID → ratings[]` for movie-based analytics
+  - `userID → ratings[]` for user-based analytics
+- **Key Features**: Rating aggregation, user behavior analysis, movie popularity metrics
+- **Performance**: O(1) rating access from both movie and user perspectives
 
----
+## Technical Skills Demonstrated
 
-## 📂 Repository Structure
+### Data Structure Design
+
+- **Hash Table Implementation**: Custom chaining-based hash table with collision resolution
+- **Dynamic Array Management**: Self-implemented resizable arrays with strategic memory allocation
+- **Algorithm Optimization**: Achieved 22x performance improvement through data structure selection
+- **Memory Management**: Efficient storage patterns and intelligent resizing policies
+
+### Software Engineering Practices
+
+- **Clean Architecture**: Separation of concerns with dedicated store classes
+- **Code Reusability**: Generic helper methods reducing code duplication
+- **Performance Analysis**: Time complexity optimization and benchmarking
+- **Testing**: Comprehensive JUnit test suite covering edge cases and performance metrics
+
+### Problem-Solving Approach
+
+- **Constraint-Driven Development**: Built complex system without standard library dependencies
+- **Trade-off Analysis**: Balanced performance, memory usage, and code complexity
+- **Scalability Considerations**: Designed for efficient handling of large datasets
+- **Iterative Improvement**: Performance optimization through systematic analysis
+
+## Repository Structure
 
 ```
 src/
@@ -91,9 +100,7 @@ data/                            # CSV data files
 CS126 Coursework Report.pdf      # Detailed design report
 ```
 
----
-
-## ▶️ How to Run
+## How to Run
 
 ### Prerequisites
 
@@ -127,9 +134,7 @@ cd Warwick-Application
 java -jar build/libs/WarwickPlus.jar
 ```
 
----
-
-## 🔍 Key Design Decisions
+## Key Design Decisions
 
 ### Data Structure Choices
 
@@ -143,9 +148,7 @@ java -jar build/libs/WarwickPlus.jar
 - **Consistent Error Handling**: Standardized return values for missing data
 - **Clear Separation**: Hash tables for lookup, dynamic arrays for iteration
 
----
-
-## 🧪 Testing
+## Testing
 
 The project includes comprehensive JUnit tests covering:
 
@@ -160,73 +163,69 @@ Run tests with:
 ./gradlew test
 ```
 
----
+## Performance Metrics
 
-## 🔮 Future Improvements
+| Operation             | Time Complexity | Implementation Notes                    |
+| --------------------- | --------------- | --------------------------------------- |
+| Movie Lookup by ID    | O(1)            | Hash table direct access                |
+| User Rating Lookup    | O(1)            | Hash table direct access                |
+| Movie Search by Title | O(n)            | Linear scan with optimization potential |
+| Collection Queries    | O(n)            | Linear scan with optimization potential |
+| Rating Addition       | O(1)            | Hash table insertion                    |
+| Data Population       | 125ms           | 22x improvement from initial 2800ms     |
 
-### Performance Optimizations
+## Future Enhancements
 
-- **Hash Table Resizing** — implement dynamic resizing & rehashing when load factor exceeds threshold
-- **Efficient Sorting** — replace bubble sort/insertion sort with mergesort or quicksort for scalability
-- **Indexing by Name** — add `HashTable<String, ID>` for O(1) search by names/titles
-- **Memory Optimizations** — fine-tune resizing policies in `MyDynamicArray`
+### Scalability Improvements
 
-### Code Quality
+- **Dynamic Hash Table Resizing**: Implement load factor monitoring and automatic rehashing
+- **Advanced Sorting**: Replace O(n²) algorithms with O(n log n) alternatives (merge sort, quick sort)
+- **Name-Based Indexing**: Add secondary hash tables for O(1) name-based searches
+- **Memory Optimization**: Implement 1.5x growth factor for more efficient memory usage
 
-- **Robust Error Handling** — custom exceptions for invalid queries instead of null returns
-- **Input Validation** — comprehensive validation for all public methods
-- **Documentation** — expand JavaDoc comments for better API documentation
+### Production Readiness
 
-### Features
+- **Exception Handling**: Custom exception classes for better error management
+- **Input Validation**: Comprehensive validation for all public methods
+- **Caching Layer**: LRU cache implementation for frequently accessed data
+- **Batch Operations**: Support for bulk insert/update operations
 
-- **Caching** — implement LRU cache for frequently accessed movies
-- **Batch Operations** — support for bulk insert/update operations
-- **Data Persistence** — save/load store state to/from files
+## Key Learnings & Impact
 
----
+### Technical Growth
 
-## 📊 Performance Analysis
+This project provided hands-on experience with fundamental computer science concepts including hash table collision resolution, dynamic array memory management, and algorithmic complexity analysis. The constraint of building without standard libraries deepened understanding of underlying data structure mechanics.
 
-Based on the detailed coursework report, the implementation demonstrates:
+### Performance Achievement
 
-| Operation             | Time Complexity | Notes                                 |
-| --------------------- | --------------- | ------------------------------------- |
-| Movie Lookup by ID    | O(1)            | Hash table access                     |
-| User Rating Lookup    | O(1)            | Hash table access                     |
-| Movie Search by Title | O(n)            | Linear scan (improvement opportunity) |
-| Collection Queries    | O(n)            | Linear scan (improvement opportunity) |
-| Rating Addition       | O(1)            | Hash table insertion                  |
+The 22x performance improvement demonstrates ability to identify bottlenecks and implement effective optimizations. This experience translates directly to real-world software development where performance optimization is crucial.
 
----
+### Engineering Excellence
 
-## 📑 Documentation
+The project showcases clean code practices, comprehensive testing, and systematic problem-solving approach. The generic helper methods and modular design demonstrate understanding of software engineering best practices.
 
-- **CS126 Coursework Report.pdf** — Comprehensive design analysis and implementation details
-- **Code Comments** — Extensive inline documentation explaining design decisions
-- **Interface Documentation** — Clear API specifications in interface files
+## Technologies & Tools
 
----
+- **Language**: Java 21
+- **Build System**: Gradle
+- **Testing**: JUnit
+- **Version Control**: Git
+- **Development**: IntelliJ IDEA
+- **Documentation**: Markdown, PDF reports
 
-## 🤝 Contributing
+## Academic Context
 
-This is a coursework project for CS126. If you're a fellow Warwick student working on similar coursework, feel free to:
+This project was completed as part of CS126: Design of Information Structures at the University of Warwick (2024/25). The coursework focused on implementing fundamental data structures from scratch to demonstrate deep understanding of computer science principles.
 
-- Study the implementation for learning purposes
-- Suggest improvements or optimizations
-- Report any issues you discover
+**Coursework Report**: Detailed design analysis and implementation decisions are documented in `CS126 Coursework Report.pdf`.
 
----
+## Contact & Portfolio
 
-## 📄 License
+This project demonstrates proficiency in:
 
-This project is created for educational purposes as part of CS126 coursework at the University of Warwick.
+- **Data Structure Implementation**: Custom hash tables and dynamic arrays
+- **Algorithm Design**: Performance optimization and complexity analysis
+- **Software Engineering**: Clean architecture and testing practices
+- **Problem Solving**: Constraint-driven development and trade-off analysis
 
----
-
-## 👨‍💻 Author
-
-Developed as part of CS126 coursework at the University of Warwick (2024/25).
-
----
-
-_For detailed implementation analysis and design decisions, see the included `CS126 Coursework Report.pdf`._
+For more projects and technical details, please visit my GitHub profile or contact me directly.
