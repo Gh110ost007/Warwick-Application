@@ -1,10 +1,10 @@
 # Warwick+ Film Database — Custom Data Structures Implementation
 
-A high-performance film database backend implemented from scratch using custom data structures, developed as part of CS126: Design of Information Structures at the University of Warwick.
+A hfilm database backend implemented from scratch using custom data structures, developed as part of CS126: Design of Information Structures at the University of Warwick.
 
 ## Project Overview
 
-This project demonstrates advanced understanding of fundamental computer science concepts by implementing a complete film database system using only custom-built data structures. The system manages three core entities — Movies, Credits, and Ratings — with optimized query performance and memory efficiency.
+This project demonstrates advanced understanding of fundamental computer science concepts by implementing a complete film database system using only custom-built data structures. The system manages three core files — Movies, Credits, and Ratings — with optimized query performance and memory efficiency.
 
 **Key Achievement:** Achieved 22x performance improvement (2800ms → 125ms) through strategic data structure design and algorithmic optimization.
 
